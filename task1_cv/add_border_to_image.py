@@ -4,11 +4,13 @@ import os
 
 
 def info_before_print():
-    """Пеатает инструкцию по использованию для пользователя"""
-    print("Использование: python task.py image_file_name frame_width_in_pixels")
+    """Печатает инструкцию по использованию для пользователя"""
+    print(
+        "Использование: python add_border_to_image.py image_file_name frame_width_in_pixels"
+    )
     print("Где image_file_name - имя вашего файла в формате ./photo или путь до него")
     print("frame_width_in_pixels - введите желаемую ширину рамки")
-    print("Например: python task.py ./exampple_2.png 20")
+    print("Например: python add_border_to_image.py ./exampple_2.png 20")
     print("Рамка будет синего цвета")
 
 
