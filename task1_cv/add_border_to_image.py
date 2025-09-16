@@ -14,39 +14,29 @@ def info_before_print():
     print("Рамка будет синего цвета")
 
 
-def main():
-    """Производит обработку входных данных и добавляет рамку изображению"""
+def add_frame_to_image(image_path, frame_width):
+    """
+    Добавляет рамку к изображению и возвращает результат
 
-    # проверяем что аргументы были переданы
-    if len(sys.argv) < 3:
-        info_before_print()
-        sys.exit()
+    Аргументы:
+    image_path (str): Путь к файлу изображения
+    frame_width (int): Ширина рамки в пикселях
+    frame_color (tuple): Цвет рамки в формате BGR (по умолчанию белый)
 
-    filename = sys.argv[1]
+    Возвращает:
+        tuple: (framed_image, output_image_path) - изображение с рамкой и имя выходного файла
 
-    # Проверяем что файл существует
-    if not os.path.exists(filename):
-        print(f"Файл {filename} не найден!")
-        sys.exit()
-
-    # Открываем
-    img = cv2.imread(filename)
+    Возможные ошибки:
+        FileNotFoundError: Если файл не существует
+        ValueError: Если изображение не может быть загружено или неверные параметры
+    """
+    # проверяем что файл существует
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"Файл {image_path} не найден!")
+    # открываем
+    img = cv2.imread(image_path)
     if img is None:
-        print("Ошибка загрузки изображения!")
-        sys.exit()
-
-    # проверяем кооректность ширины рамки. если меньше 0, выводим ошибку
-    # также проверяем что это int
-    try:
-        # с помощью этого параметра пользователь может определять ширину рамки
-        frame_width = int(sys.argv[2])
-        if frame_width < 0:
-            print("Рамка не может быть отрицательной ширины")
-            sys.exit()
-    except ValueError:
-        print("Ширина рамки должна быть целым числом")
-        sys.exit()
-
+        raise ValueError("Ошибка загрузки изображения!")
     # добавляем рамку
     bordered_image = cv2.copyMakeBorder(
         img,
@@ -60,21 +50,63 @@ def main():
     )
 
     # создаем имя для сохранения файла
-    name, ext = os.path.splitext(filename)
-    output_filename = f"{name}_framed{ext}"
+    name, ext = os.path.splitext(image_path)
+    output_image_path = f"{name}_framed{ext}"
 
-    # сохраняем изображение
-    cv2.imwrite(output_filename, bordered_image)
-    print(f"Изображение с рамкой сохранено как: {output_filename}")
+    return bordered_image, output_image_path
 
-    # показываем изображение
-    cv2.imshow("Image with Border", bordered_image)
 
-    # ждем нажатия какой-нибудь клавиши, чтобы закрылось окно с картинкой
-    key = cv2.waitKey(0)
+def main():
+    """
+    Основная функция для обработки изображения с рамкой
 
-    # Закрываем все окна
-    cv2.destroyAllWindows()
+    Обрабатывает аргументы командной строки, добавляет рамку к изображению
+    и сохраняет результат. Показывает полученное изображение.
+    """
+
+    # проверяем что аргументы были переданы
+    if len(sys.argv) < 3:
+        info_before_print()
+        sys.exit()
+
+    image_path = sys.argv[1]
+    # проверяем корректность ширины рамки и правильный тип
+    try:
+        # с помощью этого параметра пользователь может определять ширину рамки
+        frame_width = int(sys.argv[2])
+        if frame_width < 0:
+            print("Рамка не может быть отрицательной ширины")
+            sys.exit()
+    except ValueError:
+        print("Ширина рамки должна быть целым числом")
+        sys.exit()
+
+    try:
+        bordered_image, output_image_path = add_frame_to_image(image_path, frame_width)
+
+        # сохраняем изображение
+        cv2.imwrite(output_image_path, bordered_image)
+        print(f"Изображение с рамкой сохранено как: {output_image_path}")
+
+        # показываем изображение
+        cv2.imshow("Image with Border", bordered_image)
+
+        # ждем нажатия какой-нибудь клавиши, чтобы закрылось окно с картинкой
+        key = cv2.waitKey(0)
+
+        # закрываем все окна
+        cv2.destroyAllWindows()
+
+    # обработка ошибок
+    except FileNotFoundError as e:
+        print(f"Ошибка: {e}")
+        sys.exit(1)
+    except ValueError as e:
+        print(f"Ошибка: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Неожиданная ошибка: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
