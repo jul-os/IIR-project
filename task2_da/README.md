@@ -13,6 +13,6 @@
 ***Установка***
 ```console
 git clone https://github.com/jul-os/IIR-project.git
-cd task2_cv
+cd task2_da
 pip3 install -r requirements.txt
 ```
