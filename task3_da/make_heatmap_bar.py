@@ -1,12 +1,5 @@
 """
 Модуль для создания комплексных графиков: heatmap корреляции + bar plot дисперсии.
-
-Требуемые зависимости:
-- numpy>=1.21.0
-- pandas>=1.3.0
-- matplotlib>=3.5.0
-- seaborn>=0.11.0
-- scikit-learn>=1.0.0
 """
 
 import numpy as np
